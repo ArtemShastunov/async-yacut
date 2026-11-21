@@ -3,32 +3,34 @@ from flask_wtf.file import FileField, FileRequired
 from wtforms import StringField, SubmitField, URLField
 from wtforms.validators import DataRequired, Length, Optional, Regexp, URL
 
-from yacut.models import MAX_LENGTH_SHORT_ID
+from yacut.constants import MAX_LENGTH_SHORT_ID, SHORT_ID_REGEX
 
 
 class URLMapForm(FlaskForm):
     original_link = URLField(
-        "Длинная ссылка",
+        'Длинная ссылка',
         validators=[
-            DataRequired(
-                message="Обязательное поле"),
-            URL()])
-    custom_id = StringField(
-        "Ваш вариант короткой ссылки",
-        validators=[
-            Length(max=MAX_LENGTH_SHORT_ID, message="Слишком длинный ID"),
-            Regexp(
-                regex=r"^[a-zA-Z0-9]+$",
-                message="Укажите только латинские буквы и цифры",
-            ),
-            Optional(),
-        ],
+            DataRequired(message='Обязательное поле'),
+            URL()
+        ]
     )
-    submit = SubmitField("Создать")
+    custom_id = StringField(
+        'Ваш вариант короткой ссылки',
+        validators=[
+            Length(max=MAX_LENGTH_SHORT_ID, message='Слишком длинный ID'),
+            Regexp(
+                regex=SHORT_ID_REGEX,
+                message='Укажите только латинские буквы и цифры'
+            ),
+            Optional()
+        ]
+    )
+    submit = SubmitField('Создать')
 
 
 class FileUploadForm(FlaskForm):
     files = FileField(
-        "Выберите файлы", validators=[FileRequired(message="Файл не выбран")]
+        'Выберите файлы',
+        validators=[FileRequired(message='Файл не выбран')]
     )
-    submit = SubmitField("Загрузить")
+    submit = SubmitField('Загрузить')

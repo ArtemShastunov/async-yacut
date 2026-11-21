@@ -1,60 +1,57 @@
-### Как запустить проект Yacut:
+# YaCut — сервис укорачивания ссылок
 
-Клонировать репозиторий и перейти в него в командной строке:
+Проект представляет собой веб-сервис, который позволяет пользователям создавать короткие ссылки для длинных URL-адресов. 
+Дополнительной функцией является возможность асинхронной загрузки файлов на Яндекс Диск с генерацией коротких ссылок для скачивания.
 
-```
-git clone 
-```
+### Стек технологий:
+* Python 3.12
+* Flask (с поддержкой async views)
+* SQLAlchemy + Flask-Migrate (ORM и миграции)
+* WTForms + Flask-WTF (формы и валидация)
+* aiohttp (асинхронные запросы к API Яндекс Диска)
+* Yandex Disk API
+* Bootstrap (фронтенд)
 
-```
-cd yacut
-```
+### Как развернуть проект:
 
-Cоздать и активировать виртуальное окружение:
+1. Клонировать репозиторий и перейти в него:
+   git clone <ссылка_на_репозиторий>
+   cd async-yacut
 
-```
+2. Создать и активировать виртуальное окружение:
+
 python3 -m venv venv
-```
+Для Linux/macOS: source venv/bin/activate
 
-* Если у вас Linux/macOS
+Для Windows: source venv/Scripts/activate
 
-    ```
-    source venv/bin/activate
-    ```
+3. Установить зависимости:
 
-* Если у вас windows
-
-    ```
-    source venv/scripts/activate
-    ```
-
-Установить зависимости из файла requirements.txt:
-
-```
-python3 -m pip install --upgrade pip
-```
-
-```
+python -m pip install --upgrade pip
 pip install -r requirements.txt
-```
 
-Создать в директории проекта файл .env с четыремя переменными окружения:
 
-```
+4. Создать файл .env в корне проекта и заполнить переменные окружения:
+
+env
 FLASK_APP=yacut
-FLASK_ENV=development
-SECRET_KEY=your_secret_key
-DB=sqlite:///db.sqlite3
-```
+FLASK_DEBUG=1
+DATABASE_URI=sqlite:///db.sqlite3
+SECRET_KEY=your_super_secret_key
+DISK_TOKEN=your_yandex_disk_oauth_token
+(Токен для Яндекс Диска можно получить в консоли разработчика Яндекс ID)
 
-Создать базу данных и применить миграции:
+5. Применить миграции для создания базы данных:
 
-```
+bash
 flask db upgrade
-```
 
-Запустить проект:
 
-```
+6. Запустить проект:
+
+bash
 flask run
-```
+
+
+Автор:
+ArtemShastunov
