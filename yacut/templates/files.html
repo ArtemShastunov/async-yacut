@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="container my-5 px-4">
+  <h1 class="text-center"><span style="color:red">Ya</span>Cut</h1>
+  <p class="text-center my-4">
+    Загрузите файлы и получите на них короткие ссылки
+  </p>
+
+  <div class="container">
+    <div class="row my-3">
+      <div class="col-sm"></div>
+      <div class="col-sm">
+        <form method="POST" enctype="multipart/form-data" novalidate>
+          {{ form.csrf_token }}
+          <div>
+            <div class="mb-3">
+              {{ form.files(class="form-control") }}
+              {% for error in form.files.errors %}
+                <p><span style="color:red">{{ error }}</span></p>
+              {% endfor %}
+            </div>
+            {{ form.submit(class="btn btn-primary") }}
+          </div>
+        </form>
+      </div>
+      <div class="col-sm"></div>
+    </div>
+  </div>
+
+  {% if results %}
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-sm"></div>
+        <div class="col-sm">
+          <h5 class="text-center mb-3">Загруженные файлы:</h5>
+          <table class="table">
+            <tbody>
+              {% for result in results %}
+                <tr>
+                  <td>{{ result.filename }}</td>
+                  <td><a href="{{ result.short_link }}">{{ result.short_link }}</a></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="col-sm"></div>
+      </div>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}
