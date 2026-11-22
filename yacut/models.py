@@ -11,6 +11,7 @@ from yacut.constants import (
     MAX_SHORT_ID_ATTEMPTS,
     RESERVED_SHORT_IDS,
 )
+from yacut.error_handlers import ShortIdGenerationError
 
 
 class URLMap(db.Model):
@@ -25,12 +26,16 @@ class URLMap(db.Model):
         db.DateTime, index=True, default=datetime.utcnow
     )
 
+    def get_absolute_url(self):
+        """Возвращает абсолютный URL для короткой ссылки."""
+        return url_for(
+            'redirect_view', short_id=self.short, _external=True
+        )
+
     def to_dict(self):
         return {
             'url': self.original,
-            'short_link': url_for(
-                'redirect_view', short_id=self.short, _external=True
-            )
+            'short_link': self.get_absolute_url()
         }
 
     @classmethod
@@ -66,4 +71,6 @@ class URLMap(db.Model):
             )
             if not cls.get(short_id):
                 return short_id
-        raise RuntimeError('Не удалось сгенерировать уникальный ID')
+        raise ShortIdGenerationError(
+            'Не удалось сгенерировать уникальный ID'
+        )

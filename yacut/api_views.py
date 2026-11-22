@@ -3,7 +3,7 @@ from http import HTTPStatus
 from flask import jsonify, request
 
 from yacut import app
-from yacut.error_handlers import InvalidAPIUsage
+from yacut.error_handlers import InvalidAPIUsage, ShortIdGenerationError
 from yacut.forms import URLMapForm
 from yacut.models import URLMap
 
@@ -35,7 +35,7 @@ def create_id():
         url_map = URLMap.create(
             original=data['url'], custom_id=custom_id
         )
-    except ValueError as error:
+    except (ValueError, ShortIdGenerationError) as error:
         raise InvalidAPIUsage(str(error))
 
     return jsonify(url_map.to_dict()), HTTPStatus.CREATED

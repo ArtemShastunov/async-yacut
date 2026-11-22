@@ -2,6 +2,7 @@ from flask import flash, redirect, render_template, request
 
 from yacut import app
 from yacut.disk import upload_files_to_disk
+from yacut.error_handlers import ShortIdGenerationError
 from yacut.forms import FileUploadForm, URLMapForm
 from yacut.models import URLMap
 
@@ -15,14 +16,14 @@ def index_view():
                 original=form.original_link.data,
                 custom_id=form.custom_id.data
             )
-        except ValueError as error:
+        except (ValueError, ShortIdGenerationError) as error:
             flash(str(error))
             return render_template('index.html', form=form)
 
         return render_template(
             'index.html',
             form=form,
-            short_link=url_map.to_dict()['short_link']
+            short_link=url_map.get_absolute_url()
         )
     return render_template('index.html', form=form)
 
@@ -36,13 +37,16 @@ async def files_view():
 
         results = []
         for filename, original_url in uploaded_files:
-            url_map = URLMap.create(original=original_url)
-            results.append(
-                {
-                    'filename': filename,
-                    'short_link': url_map.to_dict()['short_link']
-                }
-            )
+            try:
+                url_map = URLMap.create(original=original_url)
+                results.append(
+                    {
+                        'filename': filename,
+                        'short_link': url_map.get_absolute_url()
+                    }
+                )
+            except (ValueError, ShortIdGenerationError) as error:
+                flash(f'Ошибка при обработке файла {filename}: {error}')
 
         return render_template('files.html', form=form, results=results)
 
